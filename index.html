@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Del Campo al Plato — Compra y vende productos del campo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-primary:   #2d6a4f;
+      --color-secondary: #52b788;
+      --color-accent:    #e76f51;
+      --color-accent2:   #f4a261;
+      --color-bg:        #faf7f2;
+      --color-surface:   #ffffff;
+      --color-border:    #e4ddd3;
+      --color-text:      #1e1e1e;
+      --color-muted:     #6b6660;
+      --color-tag:       #d8f3dc;
+      --font-display:    'Playfair Display', Georgia, serif;
+      --font-body:       'Lato', Arial, sans-serif;
+      --radius:          12px;
+      --shadow:          0 4px 20px rgba(0,0,0,.08);
+      --shadow-lg:       0 8px 40px rgba(0,0,0,.14);
+      --transition:      .2s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── HEADER ─────────────────────────────── */
+    header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px; gap: 16px;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: var(--color-primary);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .logo-text {
+      font-family: var(--font-display);
+      font-weight: 700; font-size: 1.15rem;
+      color: var(--color-primary); line-height: 1.1;
+    }
+    .logo-text span { display: block; font-size: .75rem; font-weight: 400; color: var(--color-muted); font-family: var(--font-body); }
+    nav { display: flex; align-items: center; gap: 8px; }
+    nav a {
+      text-decoration: none; color: var(--color-muted);
+      font-size: .9rem; padding: 6px 12px; border-radius: 8px;
+      transition: background var(--transition), color var(--transition);
+    }
+    nav a:hover { background: var(--color-tag); color: var(--color-primary); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 20px; border-radius: 50px;
+      font-family: var(--font-body); font-size: .9rem; font-weight: 700;
+      cursor: pointer; border: none; text-decoration: none;
+      transition: all var(--transition);
+    }
+    .btn-primary { background: var(--color-primary); color: #fff; }
+    .btn-primary:hover { background: #1f4f3a; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(45,106,79,.3); }
+    .btn-accent  { background: var(--color-accent);  color: #fff; }
+    .btn-accent:hover  { background: #d05f40; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(231,111,81,.3); }
+    .btn-outline { background: transparent; color: var(--color-primary); border: 2px solid var(--color-primary); }
+    .btn-outline:hover { background: var(--color-primary); color: #fff; }
+    .btn-ghost { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.3); }
+    .btn-ghost:hover { background: rgba(255,255,255,.25); }
+
+    /* ─── HERO ───────────────────────────────── */
+    .hero {
+      display: grid; grid-template-columns: 1fr 1fr;
+      max-height: 420px;
+      position: relative; overflow: hidden;
+    }
+
+    /* Lado izquierdo — contenido */
+    .hero-left {
+      background: linear-gradient(160deg, #1b4332 0%, #2d6a4f 60%, #40916c 100%);
+      color: #fff;
+      display: flex; flex-direction: column; justify-content: flex-start;
+      padding: 20px clamp(20px, 3vw, 36px);
+      position: relative; z-index: 1;
+    }
+    .hero-left::after {
+      content: '';
+      position: absolute; top: 0; right: -60px; bottom: 0;
+      width: 120px;
+      background: inherit;
+      clip-path: polygon(0 0, 50% 0, 100% 50%, 50% 100%, 0 100%);
+      z-index: 2;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,.12); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 50px; padding: 5px 14px;
+      font-size: .8rem; font-weight: 700; letter-spacing: .8px;
+      text-transform: uppercase; margin-bottom: 12px;
+      width: fit-content;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 700; line-height: 1.2; margin-bottom: 12px;
+    }
+    .hero h1 em { font-style: normal; color: var(--color-accent2); }
+    .hero-left > p {
+      font-size: .98rem; opacity: .85; margin-bottom: 18px;
+      max-width: 380px; line-height: 1.6;
+    }
+    .hero-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+
+    .hero-stats { display: flex; gap: 0; }
+    .hero-stat {
+      flex: 1; text-align: center;
+      padding: 16px 8px;
+      border-left: 1px solid rgba(255,255,255,.15);
+    }
+    .hero-stat:first-child { border-left: none; padding-left: 0; text-align: left; }
+    .hero-stat strong {
+      display: block; font-size: clamp(1.5rem, 2.5vw, 2rem);
+      font-family: var(--font-display); color: var(--color-accent2);
+      line-height: 1;
+    }
+    .hero-stat span { font-size: .75rem; opacity: .7; margin-top: 4px; display: block; }
+
+    /* Lado derecho — imagen */
+    .hero-right {
+      position: relative; overflow: hidden;
+    }
+    .hero-right img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 8s ease;
+    }
+    .hero-right:hover img { transform: scale(1.04); }
+    .hero-right-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(27,67,50,.35) 0%, transparent 40%);
+    }
+
+    /* Tarjetas flotantes sobre la imagen */
+    .hero-float-cards {
+      position: absolute; bottom: 32px; left: 20px; right: 20px;
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    }
+    .hero-float-card {
+      background: rgba(255,255,255,.92); backdrop-filter: blur(12px);
+      border-radius: 14px; padding: 12px 16px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.15);
+      min-width: 150px;
+      animation: floatUp .6s ease both;
+    }
+    .hero-float-card:nth-child(2) { animation-delay: .15s; }
+    .hero-float-card:nth-child(3) { animation-delay: .3s; }
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hfc-icon { font-size: 1.6rem; }
+    .hfc-text strong { display: block; font-size: .82rem; font-weight: 700; color: var(--color-text); }
+    .hfc-text span   { font-size: .75rem; color: var(--color-primary); font-weight: 700; }
+
+    /* Scroll indicator */
+    .hero-scroll {
+      display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
+      color: rgba(255,255,255,.6); font-size: .72rem; letter-spacing: .5px;
+      text-transform: uppercase; background: none; border: none; cursor: pointer;
+      margin-top: 4px; align-self: flex-start; padding: 0;
+      transition: color var(--transition);
+    }
+    .hero-scroll:hover { color: rgba(255,255,255,.9); }
+    .hero-scroll-dot {
+      width: 20px; height: 32px; border: 2px solid rgba(255,255,255,.35);
+      border-radius: 10px; display: flex; justify-content: center; padding-top: 5px;
+    }
+    .hero-scroll-dot::after {
+      content: '';
+      width: 4px; height: 6px; background: rgba(255,255,255,.6);
+      border-radius: 2px;
+      animation: scrollDot 1.8s ease infinite;
+    }
+    @keyframes scrollDot {
+      0%,100% { opacity: 0; transform: translateY(0); }
+      50%      { opacity: 1; transform: translateY(6px); }
+    }
+
+    /* ─── SEARCH BAR ─────────────────────────── */
+    .search-section {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: 20px;
+    }
+    .search-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+    }
+    .search-box {
+      flex: 1; min-width: 220px;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--color-bg); border: 1.5px solid var(--color-border);
+      border-radius: 50px; padding: 10px 18px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .search-box:focus-within { border-color: var(--color-secondary); box-shadow: 0 0 0 3px rgba(82,183,136,.15); }
+    .search-box input { border: none; background: transparent; flex: 1; font-size: .95rem; font-family: var(--font-body); color: var(--color-text); outline: none; }
+    .search-box input::placeholder { color: var(--color-muted); }
+    .search-icon { color: var(--color-muted); font-size: 1rem; flex-shrink: 0; }
+    select.filter-select {
+      border: 1.5px solid var(--color-border); background: var(--color-bg);
+      border-radius: 50px; padding: 10px 18px;
+      font-family: var(--font-body); font-size: .9rem; color: var(--color-text);
+      cursor: pointer; outline: none;
+      transition: border-color var(--transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6660' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      padding-right: 36px;
+    }
+    select.filter-select:focus { border-color: var(--color-secondary); }
+
+    /* ─── MAIN LAYOUT ────────────────────────── */
+    .main-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+    }
+    .section-title {
+      font-family: var(--font-display); font-size: 1.6rem; font-weight: 700;
+      color: var(--color-text);
+    }
+    .section-title span { color: var(--color-primary); }
+    .results-count { font-size: .9rem; color: var(--color-muted); }
+
+    /* ─── CATEGORÍAS PILLS ───────────────────── */
+    .categories {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px;
+    }
+    .cat-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 50px;
+      border: 1.5px solid var(--color-border);
+      background: var(--color-surface); cursor: pointer;
+      font-size: .85rem; font-weight: 700; color: var(--color-muted);
+      transition: all var(--transition);
+    }
+    .cat-pill:hover { border-color: var(--color-secondary); color: var(--color-primary); background: var(--color-tag); }
+    .cat-pill.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    /* ─── PRODUCT GRID ───────────────────────── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 24px;
+    }
+    .product-card {
+      background: var(--color-surface);
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform var(--transition), box-shadow var(--transition);
+      cursor: pointer; border: 1px solid var(--color-border);
+      display: flex; flex-direction: column;
+    }
+    .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .product-img {
+      position: relative; aspect-ratio: 4/3; overflow: hidden;
+    }
+    .product-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+    .product-card:hover .product-img img { transform: scale(1.06); }
+    .product-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: var(--color-primary); color: #fff;
+      font-size: .72rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 50px; text-transform: uppercase;
+    }
+    .product-badge.eco { background: var(--color-accent2); color: #fff; }
+    .product-heart {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(255,255,255,.9); border: none; border-radius: 50%;
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 14px; transition: all var(--transition);
+    }
+    .product-heart:hover { background: #fff; transform: scale(1.1); }
+    .product-heart.liked { color: #e74c3c; }
+    .product-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+    .product-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; }
+    .product-desc { font-size: .85rem; color: var(--color-muted); line-height: 1.5; margin-bottom: 12px; flex: 1;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .product-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .product-zone { font-size: .78rem; color: var(--color-muted); display: flex; align-items: center; gap: 3px; }
+    .product-date { font-size: .75rem; color: var(--color-muted); margin-left: auto; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--color-border); padding-top: 12px; margin-top: auto; }
+    .product-price { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--color-primary); }
+    .product-price span { font-size: .75rem; font-weight: 400; color: var(--color-muted); font-family: var(--font-body); }
+    .product-seller { display: flex; align-items: center; gap: 6px; text-decoration: none; }
+    .seller-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 2px solid var(--color-border); }
+    .seller-name { font-size: .78rem; color: var(--color-muted); font-weight: 700; }
+    .empty-state { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--color-muted); }
+    .empty-state .emoji { font-size: 3rem; display: block; margin-bottom: 12px; }
+
+    /* ─── MODAL BASE ─────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none;
+      transition: opacity .25s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--color-surface); border-radius: 16px;
+      width: 100%; max-height: 90vh; overflow-y: auto;
+      box-shadow: var(--shadow-lg); position: relative;
+      transform: translateY(20px); transition: transform .25s ease;
+    }
+    .modal-overlay.active .modal { transform: translateY(0); }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: var(--color-bg); border: 1px solid var(--color-border);
+      border-radius: 50%; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px; color: var(--color-muted);
+      transition: all var(--transition); z-index: 10;
+    }
+    .modal-close:hover { background: #f0e8e0; color: var(--color-text); }
+
+    /* ─── MODAL PRODUCTO ─────────────────────── */
+    .modal-product { max-width: 700px; }
+    .modal-product-img { width: 100%; aspect-ratio: 16/7; object-fit: cover; border-radius: 16px 16px 0 0; }
+    .modal-product-body { padding: 28px; }
+    .modal-product-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+    .modal-product-title { font-family: var(--font-display); font-size: 1.7rem; font-weight: 700; }
+    .modal-product-price { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--color-primary); white-space: nowrap; }
+    .modal-product-price small { font-size: .9rem; font-family: var(--font-body); color: var(--color-muted); }
+    .modal-desc { font-size: .95rem; color: var(--color-muted); line-height: 1.7; margin-bottom: 20px; }
+    .modal-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .tag { background: var(--color-tag); color: var(--color-primary); border-radius: 50px; padding: 4px 12px; font-size: .8rem; font-weight: 700; }
+    .modal-seller-box {
+      background: var(--color-bg); border-radius: var(--radius);
+      padding: 16px; display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px; cursor: pointer;
+      border: 1px solid var(--color-border);
+      transition: border-color var(--transition);
+    }
+    .modal-seller-box:hover { border-color: var(--color-secondary); }
+    .modal-seller-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-surface); box-shadow: var(--shadow); }
+    .modal-seller-info strong { display: block; font-size: 1rem; font-weight: 700; }
+    .modal-seller-info span { font-size: .82rem; color: var(--color-muted); }
+    .modal-seller-arrow { margin-left: auto; color: var(--color-muted); }
+    .modal-contact-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-whatsapp { background: #25d366; color: #fff; border: none; }
+    .btn-whatsapp:hover { background: #1daa54; transform: translateY(-1px); }
+    .btn-call { background: var(--color-primary); color: #fff; border: none; }
+    .btn-call:hover { background: #1f4f3a; transform: translateY(-1px); }
+
+    /* ─── MODAL VENDEDOR ─────────────────────── */
+    .modal-seller { max-width: 600px; }
+    .modal-seller-header {
+      padding: 32px 28px 24px;
+      background: linear-gradient(135deg, #1b4332, #40916c);
+      color: #fff; border-radius: 16px 16px 0 0;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .modal-seller-header img {
+      width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+      border: 4px solid rgba(255,255,255,.4); margin-bottom: 12px;
+    }
+    .modal-seller-header h2 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 4px; }
+    .modal-seller-header p { opacity: .8; font-size: .85rem; }
+    .modal-seller-body { padding: 24px; }
+    .seller-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+    .seller-stat { text-align: center; background: var(--color-bg); border-radius: 10px; padding: 14px 8px; border: 1px solid var(--color-border); }
+    .seller-stat strong { display: block; font-family: var(--font-display); font-size: 1.4rem; color: var(--color-primary); }
+    .seller-stat span { font-size: .75rem; color: var(--color-muted); }
+    .seller-products-title { font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 14px; }
+    .seller-products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .seller-mini-card { border-radius: 10px; overflow: hidden; border: 1px solid var(--color-border); cursor: pointer; transition: transform var(--transition); }
+    .seller-mini-card:hover { transform: translateY(-2px); }
+    .seller-mini-card img { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+    .seller-mini-info { padding: 10px 12px; background: var(--color-surface); }
+    .seller-mini-info strong { display: block; font-size: .88rem; font-weight: 700; }
+    .seller-mini-info span { font-size: .8rem; color: var(--color-primary); font-weight: 700; }
+
+    /* ─── MODAL PUBLICAR ─────────────────────── */
+    .modal-publish { max-width: 580px; }
+    .modal-header-green {
+      background: linear-gradient(135deg, #1b4332, #40916c);
+      color: #fff; padding: 28px 28px 24px;
+      border-radius: 16px 16px 0 0;
+    }
+    .modal-header-green h2 { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 4px; }
+    .modal-header-green p { opacity: .8; font-size: .88rem; }
+    .publish-form { padding: 28px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-weight: 700; font-size: .88rem; margin-bottom: 6px; color: var(--color-text); }
+    .form-group label .required { color: var(--color-accent); margin-left: 2px; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 12px 16px;
+      border: 1.5px solid var(--color-border); border-radius: 10px;
+      font-family: var(--font-body); font-size: .93rem; color: var(--color-text);
+      background: var(--color-bg); outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      border-color: var(--color-secondary); box-shadow: 0 0 0 3px rgba(82,183,136,.15);
+    }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .upload-area {
+      border: 2px dashed var(--color-border); border-radius: 10px;
+      padding: 28px; text-align: center; cursor: pointer;
+      transition: all var(--transition); background: var(--color-bg);
+    }
+    .upload-area:hover { border-color: var(--color-secondary); background: rgba(82,183,136,.04); }
+    .upload-area .icon { font-size: 2rem; margin-bottom: 8px; }
+    .upload-area p { font-size: .85rem; color: var(--color-muted); }
+    .upload-area span { font-size: .78rem; color: var(--color-muted); margin-top: 4px; display: block; }
+    .form-submit { width: 100%; padding: 14px; font-size: 1rem; }
+
+    /* ─── TOAST ──────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+      background: var(--color-primary); color: #fff;
+      padding: 14px 20px; border-radius: 12px;
+      font-size: .92rem; font-weight: 700;
+      box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px;
+      transform: translateY(80px); opacity: 0;
+      transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ─── FOOTER ─────────────────────────────── */
+    footer {
+      background: #1b4332; color: rgba(255,255,255,.7);
+      padding: 48px 20px 28px; margin-top: 80px;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+    .footer-brand .logo-text { color: #fff; }
+    .footer-brand .logo-text span { color: rgba(255,255,255,.5); }
+    .footer-brand p { font-size: .88rem; margin-top: 12px; line-height: 1.6; max-width: 280px; }
+    .footer-col h4 { color: #fff; font-size: .9rem; font-weight: 700; margin-bottom: 14px; text-transform: uppercase; letter-spacing: .5px; }
+    .footer-col a { display: block; font-size: .85rem; margin-bottom: 8px; color: rgba(255,255,255,.6); text-decoration: none; transition: color var(--transition); }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 20px; font-size: .82rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: gap; gap: 12px; }
+    .footer-bottom a { color: rgba(255,255,255,.5); text-decoration: none; }
+    .footer-bottom a:hover { color: #fff; }
+
+    /* ─── RESPONSIVE ─────────────────────────── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left::after { display: none; }
+      .hero-right { min-height: 320px; }
+      .hero-float-cards { bottom: 16px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      nav { display: none; }
+      .hero-left { padding: 48px 24px 40px; }
+      .hero-stats { gap: 0; }
+      .hero-float-cards { gap: 8px; }
+      .hero-float-card { min-width: 120px; padding: 10px 12px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+      .modal-product-header { flex-direction: column; gap: 6px; }
+      .form-row { grid-template-columns: 1fr; }
+      .seller-products-grid { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+
+    /* ─── BANNER COOKIES ─────────────────────── */
+    .cookie-banner {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000;
+      background: #1b4332; color: #fff;
+      padding: 16px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+      box-shadow: 0 -4px 24px rgba(0,0,0,.25);
+      transform: translateY(110%);
+      transition: transform .45s cubic-bezier(.34,1.2,.64,1);
+    }
+    .cookie-banner.show { transform: translateY(0); }
+    .cookie-banner p { font-size: .88rem; opacity: .9; max-width: 700px; line-height: 1.55; }
+    .cookie-banner a { color: var(--color-accent2); text-decoration: underline; }
+    .cookie-banner-actions { display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
+    .btn-cookie-accept { background: var(--color-accent2); color: #1b4332; font-weight: 700; }
+    .btn-cookie-accept:hover { background: #dfa050; }
+    .btn-cookie-reject { background: transparent; color: rgba(255,255,255,.75); border: 1px solid rgba(255,255,255,.3); }
+    .btn-cookie-reject:hover { background: rgba(255,255,255,.1); color: #fff; }
+
+    /* ─── MODALES LEGALES ────────────────────── */
+    .modal-legal { max-width: 720px; }
+    .modal-legal-header {
+      background: var(--color-primary); color: #fff;
+      padding: 28px 32px 22px; border-radius: 16px 16px 0 0;
+    }
+    .modal-legal-header h2 { font-family: var(--font-display); font-size: 1.45rem; margin-bottom: 4px; }
+    .modal-legal-header p  { opacity: .8; font-size: .83rem; }
+    .modal-legal-body { padding: 28px 32px; }
+    .legal-prose { font-size: .875rem; line-height: 1.8; color: var(--color-text); }
+    .legal-prose h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 22px 0 7px; color: var(--color-primary); }
+    .legal-prose h3:first-child { margin-top: 0; }
+    .legal-prose p { margin-bottom: 11px; }
+    .legal-prose ul { margin: 6px 0 12px 20px; }
+    .legal-prose li { margin-bottom: 4px; }
+    .legal-prose a { color: var(--color-primary); }
+    .legal-hr { border: none; border-top: 1px solid var(--color-border); margin: 18px 0; }
+
+    /* ─── CHECKBOX LEGAL FORMULARIO ─────────── */
+    .form-check {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #fff8e1; border: 1.5px solid #ffe082;
+      border-radius: 10px; padding: 12px 14px; margin-bottom: 20px;
+    }
+    .form-check input[type="checkbox"] {
+      width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;
+      accent-color: var(--color-primary); cursor: pointer;
+    }
+    .form-check label { font-size: .82rem; color: var(--color-text); line-height: 1.5; cursor: pointer; }
+    .form-check label a { color: var(--color-primary); font-weight: 700; }
+    .form-check.error { border-color: var(--color-accent); background: #fff3f0; }
+
+    /* ─── BOTÓN REPORTAR ─────────────────────── */
+    .btn-report {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: none; border: none; cursor: pointer;
+      font-size: .78rem; color: var(--color-muted);
+      padding: 6px 0; font-family: var(--font-body);
+      text-decoration: underline; text-underline-offset: 2px;
+      transition: color var(--transition);
+    }
+    .btn-report:hover { color: var(--color-accent); }
+    .modal-report-row {
+      display: flex; justify-content: flex-end;
+      border-top: 1px solid var(--color-border);
+      padding-top: 12px; margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  HEADER                                  ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<header>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-icon">🌿</div>
+      <div class="logo-text">Del Campo al Plato<span>Mercado de productores</span></div>
+    </a>
+    <nav>
+      <a href="#productos">Productos</a>
+      <a href="#como-funciona">Cómo funciona</a>
+    </nav>
+    <button class="btn btn-primary" id="btn-publicar-header">
+      ＋ Publicar anuncio
+    </button>
+  </div>
+</header>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  HERO                                    ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<section class="hero" aria-label="Cabecera principal">
+
+  <!-- LADO IZQUIERDO — Contenido -->
+  <div class="hero-left">
+    <div class="hero-badge">🌾 100% Gratuito · Sin intermediarios</div>
+    <h1>Del productor<br>a tu mesa,<br><em>sin intermediarios</em></h1>
+    <p>El mercado digital donde los trabajadores del campo venden sus cosechas directamente. Sin comisiones, sin pagos, sin complicaciones.</p>
+    <div class="hero-actions">
+      <button class="btn btn-accent" id="btn-publicar-hero">＋ Publicar mi cosecha</button>
+    </div>
+  </div>
+
+  <!-- LADO DERECHO — Imagen + tarjetas flotantes -->
+  <div class="hero-right">
+    <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=900&h=1000&fit=crop&crop=center" alt="Huerta con verduras y hortalizas frescas" width="900" height="1000">
+    <div class="hero-right-overlay" aria-hidden="true"></div>
+  </div>
+
+</section>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  BÚSQUEDA Y FILTROS                      ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div class="search-section">
+  <div class="search-inner">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Buscar tomates, naranjas, miel…" aria-label="Buscar productos">
+    </div>
+    <select class="filter-select" id="filter-zona" aria-label="Filtrar por zona">
+      <option value="">📍 Todas las zonas</option>
+    </select>
+    <select class="filter-select" id="filter-precio" aria-label="Filtrar por precio">
+      <option value="">💶 Cualquier precio</option>
+      <option value="0-1">Hasta 1 €/kg</option>
+      <option value="1-3">1 € – 3 €/kg</option>
+      <option value="3-10">3 € – 10 €/kg</option>
+      <option value="10-999">Más de 10 €/kg</option>
+    </select>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  PRODUCTOS                               ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<main>
+  <div class="main-inner" id="productos">
+    <div class="section-header">
+      <h2 class="section-title">Productos <span>del campo</span></h2>
+      <span class="results-count" id="results-count">Cargando…</span>
+    </div>
+
+    <div class="categories" id="categories-bar" role="list" aria-label="Categorías"></div>
+
+    <div class="product-grid" id="product-grid" role="list"></div>
+  </div>
+</main>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  COMO FUNCIONA                           ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<section id="como-funciona" style="background: var(--color-surface); padding: 64px 20px; border-top: 1px solid var(--color-border);">
+  <div style="max-width:1200px;margin:0 auto;text-align:center;">
+    <h2 style="font-family:var(--font-display);font-size:2rem;margin-bottom:12px;">¿Cómo funciona?</h2>
+    <p style="color:var(--color-muted);max-width:480px;margin:0 auto 48px;font-size:.95rem;">Tres pasos y ya estás vendiendo. Sin comisiones, sin contratos, sin complicaciones.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:32px;">
+      <div style="text-align:center;">
+        <div style="width:64px;height:64px;background:var(--color-tag);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;">📸</div>
+        <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:8px;">1. Publica tu cosecha</h3>
+        <p style="font-size:.88rem;color:var(--color-muted);line-height:1.6;">Sube fotos, escribe una descripción y fija tu precio. Es gratis y solo tarda 2 minutos.</p>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:64px;height:64px;background:#fff3e0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;">📩</div>
+        <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:8px;">2. Recibe contactos</h3>
+        <p style="font-size:.88rem;color:var(--color-muted);line-height:1.6;">Los compradores te contactan directamente por WhatsApp o teléfono. Tú decides a quién vendes.</p>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:64px;height:64px;background:#e8f5e9;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;">🤝</div>
+        <h3 style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:8px;">3. Acuerda la entrega</h3>
+        <p style="font-size:.88rem;color:var(--color-muted);line-height:1.6;">Quedáis directamente. Sin plataforma en medio, sin comisiones. El dinero va directo a ti.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  FOOTER                                  ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <div class="logo-icon">🌿</div>
+          <div class="logo-text">Del Campo al Plato<span>Mercado de productores</span></div>
+        </a>
+        <p>El mercado digital donde los trabajadores del campo venden sus cosechas directamente, sin intermediarios y sin costes.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Plataforma</h4>
+        <a href="#productos">Ver productos</a>
+        <a href="#" id="link-publicar-footer">Publicar anuncio</a>
+        <a href="#como-funciona">Cómo funciona</a>
+      </div>
+      <div class="footer-col">
+        <h4>Información</h4>
+        <a href="#">Sobre nosotros</a>
+        <a href="#" id="link-privacidad-footer">Política de privacidad</a>
+        <a href="#" id="link-aviso-footer">Aviso legal</a>
+        <a href="#" id="link-cookies-footer">Política de cookies</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Del Campo al Plato. Plataforma 100% gratuita para productores.</span>
+      <div style="display:flex;gap:16px;">
+        <a href="#" id="link-privacidad-bottom">Privacidad</a>
+        <a href="#" id="link-cookies-bottom">Cookies</a>
+        <a href="#" id="link-aviso-bottom">Aviso legal</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  MODAL DETALLE PRODUCTO                  ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div class="modal-overlay" id="modal-producto" role="dialog" aria-modal="true" aria-label="Detalle del producto">
+  <div class="modal modal-product">
+    <button class="modal-close" id="close-producto" aria-label="Cerrar">✕</button>
+    <img id="mp-img" src="" alt="" class="modal-product-img">
+    <div class="modal-product-body">
+      <div class="modal-product-header">
+        <div>
+          <div class="modal-tags" id="mp-tags"></div>
+          <h2 class="modal-product-title" id="mp-nombre"></h2>
+        </div>
+        <div style="text-align:right">
+          <div class="modal-product-price" id="mp-precio"></div>
+        </div>
+      </div>
+      <p class="modal-desc" id="mp-desc"></p>
+      <div class="modal-seller-box" id="mp-seller-box">
+        <img class="modal-seller-avatar" id="mp-seller-img" src="" alt="">
+        <div class="modal-seller-info">
+          <strong id="mp-seller-nombre"></strong>
+          <span id="mp-seller-zona"></span>
+        </div>
+        <span class="modal-seller-arrow">›</span>
+      </div>
+      <div class="modal-contact-btns">
+        <a href="#" id="mp-whatsapp" class="btn btn-whatsapp" target="_blank" rel="noopener">
+          💬 WhatsApp
+        </a>
+        <a href="#" id="mp-llamar" class="btn btn-call">
+          📞 Llamar
+        </a>
+      </div>
+      <div class="modal-report-row">
+        <button class="btn-report" id="mp-reportar" aria-label="Reportar este anuncio">
+          🚩 Reportar anuncio
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  MODAL PERFIL VENDEDOR                   ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div class="modal-overlay" id="modal-vendedor" role="dialog" aria-modal="true" aria-label="Perfil del vendedor">
+  <div class="modal modal-seller">
+    <button class="modal-close" id="close-vendedor" aria-label="Cerrar">✕</button>
+    <div class="modal-seller-header">
+      <img id="mv-img" src="" alt="">
+      <h2 id="mv-nombre"></h2>
+      <p id="mv-zona"></p>
+    </div>
+    <div class="modal-seller-body">
+      <div class="seller-stats">
+        <div class="seller-stat"><strong id="mv-nanuncios">0</strong><span>Anuncios</span></div>
+        <div class="seller-stat"><strong id="mv-rating">⭐ 0</strong><span>Valoración</span></div>
+        <div class="seller-stat"><strong id="mv-ventas">0</strong><span>Ventas</span></div>
+      </div>
+      <h3 class="seller-products-title">Otros productos de este vendedor</h3>
+      <div class="seller-products-grid" id="mv-products"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  MODAL PUBLICAR ANUNCIO                  ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div class="modal-overlay" id="modal-publicar" role="dialog" aria-modal="true" aria-label="Publicar anuncio">
+  <div class="modal modal-publish">
+    <button class="modal-close" id="close-publicar" aria-label="Cerrar">✕</button>
+    <div class="modal-header-green">
+      <h2>Publica tu cosecha</h2>
+      <p>Gratis y visible en minutos. Sin comisiones, sin contratos.</p>
+    </div>
+    <form class="publish-form" id="publish-form" novalidate>
+      <div class="form-group">
+        <label for="pub-nombre">Nombre del producto <span class="required">*</span></label>
+        <input type="text" id="pub-nombre" placeholder="Ej: Tomates cherry ecológicos" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pub-categoria">Categoría <span class="required">*</span></label>
+          <select id="pub-categoria" required>
+            <option value="">Selecciona…</option>
+            <option>🍅 Verduras</option>
+            <option>🍊 Frutas</option>
+            <option>🌾 Cereales</option>
+            <option>🫘 Legumbres</option>
+            <option>🫒 Aceite y conservas</option>
+            <option>🍯 Miel y derivados</option>
+            <option>🥛 Lácteos</option>
+            <option>🥩 Carne y embutidos</option>
+            <option>🐟 Pescado</option>
+            <option>🌿 Hierbas y especias</option>
+            <option>📦 Otros</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="pub-zona">Zona <span class="required">*</span></label>
+          <input type="text" id="pub-zona" placeholder="Ej: Valencia" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pub-precio">Precio (€) <span class="required">*</span></label>
+          <input type="number" id="pub-precio" placeholder="1.50" min="0" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="pub-unidad">Unidad</label>
+          <select id="pub-unidad">
+            <option>kg</option>
+            <option>caja (10kg)</option>
+            <option>unidad</option>
+            <option>docena</option>
+            <option>litro</option>
+            <option>bote (250ml)</option>
+            <option>bote (500ml)</option>
+            <option>a convenir</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="pub-desc">Descripción</label>
+        <textarea id="pub-desc" placeholder="Describe tu producto: variedad, método de cultivo, cantidad disponible…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Foto del producto</label>
+        <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Subir imagen">
+          <div class="icon">📷</div>
+          <p>Haz clic para subir una foto</p>
+          <span>JPG, PNG · Máx. 5 MB</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="pub-telefono">Teléfono de contacto <span class="required">*</span></label>
+        <input type="tel" id="pub-telefono" placeholder="6XX XXX XXX" required>
+      </div>
+      <div class="form-group">
+        <label for="pub-vendedor">Tu nombre <span class="required">*</span></label>
+        <input type="text" id="pub-vendedor" placeholder="Nombre que verán los compradores" required>
+      </div>
+      <div class="form-check" id="check-normativa-wrap">
+        <input type="checkbox" id="pub-normativa">
+        <label for="pub-normativa">
+          Declaro que cumplo con la normativa sanitaria vigente para la venta de productos alimentarios en España
+          (Reglamento CE 178/2002 y legislación autonómica aplicable) y que soy el único responsable de los
+          datos y productos que publico. <a href="#" class="open-aviso-legal">Ver aviso legal</a>.
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary form-submit">Publicar anuncio gratis 🚀</button>
+    </form>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  BANNER COOKIES                          ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div class="cookie-banner" id="cookie-banner" role="region" aria-label="Aviso de cookies">
+  <p>
+    🍪 Esta web no usa cookies de seguimiento ni publicidad. Solo utilizamos datos técnicos imprescindibles para el funcionamiento.
+    Consulta nuestra <a href="#" id="link-cookies-banner">Política de cookies</a>
+    y nuestra <a href="#" id="link-privacidad-banner">Política de privacidad</a>.
+  </p>
+  <div class="cookie-banner-actions">
+    <button class="btn btn-cookie-reject" id="btn-cookies-info">Más información</button>
+    <button class="btn btn-cookie-accept" id="btn-cookies-accept">Entendido ✓</button>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  MODAL AVISO LEGAL                       ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div class="modal-overlay" id="modal-aviso-legal" role="dialog" aria-modal="true" aria-label="Aviso Legal">
+  <div class="modal modal-legal">
+    <button class="modal-close" id="close-aviso-legal" aria-label="Cerrar">✕</button>
+    <div class="modal-legal-header">
+      <h2>⚖️ Aviso Legal</h2>
+      <p>Última actualización: marzo de 2026</p>
+    </div>
+    <div class="modal-legal-body">
+      <div class="legal-prose">
+        <h3>1. Datos identificativos del titular</h3>
+        <p>En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa de los datos del titular de este sitio web:</p>
+        <ul>
+          <li><strong>Denominación:</strong> Del Campo al Plato [Indica aquí tu nombre completo o razón social]</li>
+          <li><strong>NIF/CIF:</strong> [Tu NIF o CIF]</li>
+          <li><strong>Domicilio:</strong> [Tu dirección postal completa], España</li>
+          <li><strong>Email de contacto:</strong> <a href="mailto:info@delcampoalplato.es">info@delcampoalplato.es</a></li>
+          <li><strong>Actividad:</strong> Plataforma de tablón de anuncios para productores agrícolas, de carácter gratuito</li>
+        </ul>
+
+        <hr class="legal-hr">
+        <h3>2. Objeto y naturaleza de la plataforma</h3>
+        <p>Del Campo al Plato es un tablón de anuncios digital gratuito que facilita el contacto directo entre productores agrícolas y potenciales compradores. La plataforma actúa exclusivamente como intermediaria de contacto: <strong>no interviene en las transacciones, no es parte en los contratos de compraventa y no asume ninguna responsabilidad sobre las operaciones que se realicen entre vendedor y comprador.</strong></p>
+        <p>Los precios, cantidades, calidad y condiciones de entrega son acordados exclusivamente entre las partes.</p>
+
+        <hr class="legal-hr">
+        <h3>3. Responsabilidad de los vendedores</h3>
+        <p>Cada productor que publica un anuncio en esta plataforma es el único responsable de:</p>
+        <ul>
+          <li>Cumplir con la normativa sanitaria aplicable a la venta de productos alimentarios (Reglamento CE nº 178/2002 y normativa autonómica correspondiente).</li>
+          <li>Disponer de las autorizaciones, registros o inscripciones exigidas por la legislación vigente (RGSEAA u otros registros autonómicos) cuando sean preceptivos.</li>
+          <li>La veracidad, exactitud y legalidad de los datos e imágenes publicados en sus anuncios.</li>
+          <li>El cumplimiento de sus obligaciones fiscales derivadas de la actividad de venta.</li>
+        </ul>
+        <p>El titular de la plataforma no verifica ni garantiza el cumplimiento de los requisitos anteriores por parte de los vendedores y queda expresamente exonerado de cualquier responsabilidad derivada de su incumplimiento.</p>
+
+        <hr class="legal-hr">
+        <h3>4. Propiedad intelectual</h3>
+        <p>El diseño, logotipos, textos e imágenes propias de este sitio web son titularidad del titular de la plataforma o cuentan con licencia de uso. Las fotografías publicadas por los vendedores en sus anuncios son responsabilidad exclusiva de estos, quienes garantizan disponer de los derechos necesarios para su publicación.</p>
+
+        <hr class="legal-hr">
+        <h3>5. Ley aplicable y jurisdicción</h3>
+        <p>Este aviso legal se rige por la legislación española. Para la resolución de cualquier controversia, las partes se someten a los Juzgados y Tribunales del domicilio del titular de la plataforma, salvo que la normativa de consumo establezca otro fuero imperativo.</p>
+
+        <hr class="legal-hr">
+        <hr class="legal-hr">
+        <h3>6. Exoneración de responsabilidad por problemas sanitarios y fraudes</h3>
+        <p><strong>Del Campo al Plato es un tablón de anuncios gratuito y no interviene en ninguna transacción.</strong> Al amparo del artículo 16 de la Ley 34/2002 (LSSI-CE), el titular queda expresamente exonerado de responsabilidad por:</p>
+        <ul>
+          <li><strong>Problemas sanitarios:</strong> cualquier daño a la salud derivado del consumo de productos anunciados en la plataforma. Cada vendedor es el único responsable de la seguridad e higiene de sus productos y del cumplimiento de la normativa sanitaria aplicable.</li>
+          <li><strong>Fraudes y estafas:</strong> engaños, incumplimientos de contrato, pagos sin entrega o cualquier conducta fraudulenta entre usuarios. La plataforma no verifica la identidad de los usuarios ni garantiza la veracidad de los anuncios.</li>
+          <li><strong>Calidad del producto:</strong> diferencias entre lo descrito en el anuncio y el producto efectivamente entregado.</li>
+          <li><strong>Disputas entre usuarios:</strong> conflictos de cualquier naturaleza entre vendedores y compradores.</li>
+        </ul>
+        <p>Esta exoneración opera siempre que el titular no haya tenido conocimiento efectivo de la actividad ilícita o, habiéndolo tenido, haya actuado con diligencia para retirar el contenido. Si detectas un anuncio fraudulento o potencialmente peligroso, usa el botón <strong>"Reportar anuncio"</strong> disponible en cada ficha de producto, o escribe a <a href="mailto:reportes@delcampoalplato.es">reportes@delcampoalplato.es</a>.</p>
+        <p><strong>Recomendación:</strong> antes de comprar, verifica la identidad del vendedor, solicita información sobre sus registros sanitarios si procede y usa formas de pago que protejan tus intereses.</p>
+
+        <hr class="legal-hr">
+        <h3>7. Modificaciones</h3>
+        <p>El titular se reserva el derecho a modificar el presente aviso legal en cualquier momento. Las modificaciones serán efectivas desde su publicación en la plataforma.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  MODAL POLÍTICA DE PRIVACIDAD            ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div class="modal-overlay" id="modal-privacidad" role="dialog" aria-modal="true" aria-label="Política de Privacidad">
+  <div class="modal modal-legal">
+    <button class="modal-close" id="close-privacidad" aria-label="Cerrar">✕</button>
+    <div class="modal-legal-header">
+      <h2>🔐 Política de Privacidad</h2>
+      <p>Última actualización: marzo de 2026 · RGPD y LOPDGDD</p>
+    </div>
+    <div class="modal-legal-body">
+      <div class="legal-prose">
+        <h3>1. Responsable del tratamiento</h3>
+        <ul>
+          <li><strong>Identidad:</strong> Del Campo al Plato [Nombre completo o razón social]</li>
+          <li><strong>NIF:</strong> [Tu NIF]</li>
+          <li><strong>Dirección:</strong> [Tu dirección]</li>
+          <li><strong>Email:</strong> <a href="mailto:privacidad@delcampoalplato.es">privacidad@delcampoalplato.es</a></li>
+        </ul>
+
+        <hr class="legal-hr">
+        <h3>2. Datos que recogemos y con qué finalidad</h3>
+        <p><strong>Datos de vendedores (al publicar un anuncio):</strong> nombre, número de teléfono y zona geográfica. Finalidad: mostrar el anuncio públicamente para que los compradores puedan contactar al vendedor. Base jurídica: ejecución de la relación contractual (art. 6.1.b RGPD).</p>
+        <p><strong>Datos de contacto (formulario de consulta):</strong> nombre y email. Finalidad: responder a la consulta remitida. Base jurídica: interés legítimo del responsable (art. 6.1.f RGPD).</p>
+        <p>No elaboramos perfiles de usuario, no realizamos decisiones automatizadas ni cedemos datos a terceros con fines comerciales.</p>
+
+        <hr class="legal-hr">
+        <h3>3. Conservación de los datos</h3>
+        <p>Los datos de los anuncios se conservan mientras el anuncio esté activo. El vendedor puede solicitar su retirada en cualquier momento escribiendo a nuestro email de contacto. Los datos de consultas se conservan durante el tiempo necesario para gestionar la solicitud y, como máximo, 1 año.</p>
+
+        <hr class="legal-hr">
+        <h3>4. Tus derechos</h3>
+        <p>Tienes derecho a acceder, rectificar, suprimir, limitar el tratamiento, oponerte y a la portabilidad de tus datos. Para ejercerlos, escribe a <a href="mailto:privacidad@delcampoalplato.es">privacidad@delcampoalplato.es</a> indicando tu solicitud y una copia de tu DNI. Tienes derecho a presentar reclamación ante la Agencia Española de Protección de Datos (www.aepd.es).</p>
+
+        <hr class="legal-hr">
+        <h3>5. Datos de terceros en los anuncios</h3>
+        <p>Los vendedores que publiquen datos de contacto de terceras personas asumen la responsabilidad de haberles informado sobre la publicación de sus datos y de contar con su consentimiento, de conformidad con el RGPD.</p>
+
+        <hr class="legal-hr">
+        <h3>6. Seguridad</h3>
+        <p>Aplicamos medidas técnicas y organizativas razonables para proteger los datos frente a accesos no autorizados, pérdida o destrucción. No obstante, ningún sistema de transmisión por internet es completamente seguro.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  MODAL POLÍTICA DE COOKIES               ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<div class="modal-overlay" id="modal-cookies" role="dialog" aria-modal="true" aria-label="Política de Cookies">
+  <div class="modal modal-legal">
+    <button class="modal-close" id="close-cookies" aria-label="Cerrar">✕</button>
+    <div class="modal-legal-header">
+      <h2>🍪 Política de Cookies</h2>
+      <p>Última actualización: marzo de 2026</p>
+    </div>
+    <div class="modal-legal-body">
+      <div class="legal-prose">
+        <h3>¿Qué son las cookies?</h3>
+        <p>Las cookies son pequeños ficheros de texto que un sitio web almacena en el navegador del usuario. Permiten que el sitio recuerde preferencias o información entre visitas.</p>
+
+        <hr class="legal-hr">
+        <h3>¿Qué cookies usa esta web?</h3>
+        <p><strong>Del Campo al Plato no utiliza cookies de seguimiento, publicidad ni analítica de terceros.</strong></p>
+        <p>Únicamente se almacena en el <em>almacenamiento local del navegador</em> (localStorage) una preferencia técnica: si el usuario ha cerrado el aviso de cookies. Este dato no identifica al usuario, no se transmite a ningún servidor y puede borrarse limpiando los datos del navegador.</p>
+        <ul>
+          <li><strong>Nombre:</strong> <code>dcap_cookies_ok</code></li>
+          <li><strong>Tipo:</strong> Técnica / preferencia de interfaz</li>
+          <li><strong>Duración:</strong> 365 días</li>
+          <li><strong>Finalidad:</strong> Recordar que el usuario ha visto el aviso de cookies</li>
+          <li><strong>Terceros:</strong> No. Solo datos locales en el navegador del usuario.</li>
+        </ul>
+
+        <hr class="legal-hr">
+        <h3>¿Cómo desactivar o eliminar estas preferencias?</h3>
+        <p>Puedes borrar estos datos en cualquier momento desde la configuración de tu navegador en el apartado de <em>Datos del sitio</em> o <em>Almacenamiento local</em>. Al borrarlos, el aviso de cookies volverá a aparecer en tu próxima visita.</p>
+
+        <hr class="legal-hr">
+        <h3>Servicios de terceros</h3>
+        <p>Esta web carga fuentes tipográficas de <strong>Google Fonts</strong> e imágenes de demostración de <strong>picsum.photos</strong>. Estos servicios pueden registrar la dirección IP del visitante según sus propias políticas de privacidad, que son independientes de esta plataforma. Consulta sus políticas en <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google</a> y <a href="https://picsum.photos" target="_blank" rel="noopener">picsum.photos</a>.</p>
+        <p>En una versión de producción que sustituyera las imágenes de demostración por imágenes propias alojadas en el mismo servidor, esta dependencia desaparecería.</p>
+
+        <hr class="legal-hr">
+        <h3>Contacto</h3>
+        <p>Para cualquier consulta sobre esta política escribe a <a href="mailto:privacidad@delcampoalplato.es">privacidad@delcampoalplato.es</a>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+<!-- ╔══════════════════════════════════════════╗ -->
+<!-- ║  JAVASCRIPT                              ║ -->
+<!-- ╚══════════════════════════════════════════╝ -->
+<script>
+// ─── DATOS ─────────────────────────────────────
+const vendedores = [
+  { id: 1, nombre: 'María García',   zona: 'Valencia',   foto: 'https://i.pravatar.cc/80?img=47', rating: 4.9, ventas: 87 },
+  { id: 2, nombre: 'Antonio Ruiz',   zona: 'Andalucía',  foto: 'https://i.pravatar.cc/80?img=12', rating: 4.7, ventas: 134 },
+  { id: 3, nombre: 'Rosa Martínez',  zona: 'Murcia',     foto: 'https://i.pravatar.cc/80?img=44', rating: 5.0, ventas: 62 },
+  { id: 4, nombre: 'Paco Jiménez',   zona: 'Extremadura',foto: 'https://i.pravatar.cc/80?img=8',  rating: 4.6, ventas: 210 },
+  { id: 5, nombre: 'Lola Fernández', zona: 'Castilla-La Mancha', foto: 'https://i.pravatar.cc/80?img=35', rating: 4.8, ventas: 55 },
+  { id: 6, nombre: 'Jaume Puig',     zona: 'Cataluña',   foto: 'https://i.pravatar.cc/80?img=53', rating: 4.5, ventas: 98 },
+  { id: 7, nombre: 'Concha López',   zona: 'Aragón',     foto: 'https://i.pravatar.cc/80?img=31', rating: 4.9, ventas: 42 },
+  { id: 8, nombre: 'Manolo Sánchez', zona: 'Valencia',   foto: 'https://i.pravatar.cc/80?img=7',  rating: 4.7, ventas: 170 },
+];
+
+const productos = [
+  { id:1,  nombre:'Tomates cherry ecológicos',  cat:'Verduras',    precio:2.20, unidad:'kg',        zona:'Valencia',    desc:'Variedad cherry sin pesticidas, recogidos cada mañana. Cultivo familiar desde 1985. Ideal para ensaladas y tapas.',      img:'https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=600&h=400&fit=crop', eco:true,  vendedorId:1, tel:'612345678', fecha:'Hoy' },
+  { id:2,  nombre:'Naranjas de mesa Valencia',  cat:'Frutas',      precio:0.80, unidad:'kg',        zona:'Valencia',    desc:'Naranja Valencia tardía, zumo excelente. Calibre 7-8. Cosecha propia directa del árbol.',                               img:'https://images.unsplash.com/photo-1587735243615-c03f25aaff15?w=600&h=400&fit=crop', eco:false, vendedorId:8, tel:'698765432', fecha:'Hoy' },
+  { id:3,  nombre:'Aceite de oliva virgen extra',cat:'Aceite y conservas',precio:8.50,unidad:'litro',zona:'Andalucía',  desc:'AOVE de cosecha temprana, variedad picual. Acidez inferior al 0,2%. Envasado en nuestra almazara familiar.',            img:'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&h=400&fit=crop', eco:false, vendedorId:2, tel:'611222333', fecha:'Ayer' },
+  { id:4,  nombre:'Melones piel de sapo',       cat:'Frutas',      precio:0.45, unidad:'kg',        zona:'Castilla-La Mancha', desc:'Melones dulces de verano, variedad piel de sapo. Mínimo 5 kg por compra. Recogida en campo, muy frescos.',         img:'https://images.unsplash.com/photo-1571575173700-afb9492d4010?w=600&h=400&fit=crop', eco:false, vendedorId:5, tel:'633444555', fecha:'Ayer' },
+  { id:5,  nombre:'Lechugas romanas frescas',   cat:'Verduras',    precio:0.60, unidad:'unidad',    zona:'Murcia',      desc:'Lechugas cortadas esta mañana. Corazón crujiente, ideal para Caesar o ensaladas. Venta a partir de docena.',              img:'https://images.unsplash.com/photo-1556801712-76c8eb07bbc9?w=600&h=400&fit=crop', eco:false, vendedorId:3, tel:'644555666', fecha:'Hoy' },
+  { id:6,  nombre:'Miel de romero artesanal',   cat:'Miel y derivados',precio:12.00,unidad:'bote (500ml)',zona:'Aragón',desc:'Miel pura de romero, sin pasteurizar ni mezclas. Colmenas propias en zona montañosa libre de contaminación.',          img:'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&h=400&fit=crop', eco:true,  vendedorId:7, tel:'655666777', fecha:'Hace 2 días' },
+  { id:7,  nombre:'Trigo duro ecológico',       cat:'Cereales',    precio:0.35, unidad:'kg',        zona:'Extremadura', desc:'Trigo duro variedad Senatore Cappelli, cultivo ecológico certificado. Venta mínima 50 kg. Ideal para harinas integrales.',img:'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&h=400&fit=crop', eco:true,  vendedorId:4, tel:'666777888', fecha:'Hace 3 días' },
+  { id:8,  nombre:'Limones naturales Murcia',   cat:'Frutas',      precio:1.10, unidad:'kg',        zona:'Murcia',      desc:'Limones de Murcia con hoja, piel gruesa y muy aromáticos. Sin tratar después de la cosecha.',                             img:'https://images.unsplash.com/photo-1587830736580-6b01b0bde791?w=600&h=400&fit=crop', eco:false, vendedorId:3, tel:'644555666', fecha:'Hoy' },
+  { id:9,  nombre:'Pimientos rojos asados',     cat:'Aceite y conservas',precio:3.50,unidad:'bote (500ml)',zona:'Cataluña',desc:'Pimientos rojos de temporada asados en casa, en aceite de oliva. Receta tradicional de la abuela. Sin conservantes.',img:'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=600&h=400&fit=crop', eco:false,vendedorId:6, tel:'677888999', fecha:'Hace 2 días' },
+  { id:10, nombre:'Alubias blancas de cosecha', cat:'Legumbres',   precio:2.80, unidad:'kg',        zona:'Castilla-La Mancha', desc:'Alubias blancas grandes de cosecha propia. Secadas naturalmente. Cocinan rápido y quedan muy cremosas.',             img:'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&h=400&fit=crop', eco:false, vendedorId:5, tel:'633444555', fecha:'Hace 4 días' },
+  { id:11, nombre:'Fresas de temporada',        cat:'Frutas',      precio:1.80, unidad:'kg',        zona:'Andalucía',   desc:'Fresas de primera calidad, variedad Camarosa. Rosadas y dulces. Disponibles solo de enero a mayo.',                     img:'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=600&h=400&fit=crop', eco:false, vendedorId:2, tel:'611222333', fecha:'Hoy' },
+  { id:12, nombre:'Hierbas aromáticas frescas', cat:'Hierbas y especias',precio:1.20,unidad:'manojo',zona:'Valencia',   desc:'Mezcla de hierbas: romero, tomillo, orégano y albahaca. Frescas, cortadas el mismo día del pedido.',                    img:'https://images.unsplash.com/photo-1466347219153-1d8ef2974b9a?w=600&h=400&fit=crop', eco:true,  vendedorId:1, tel:'612345678', fecha:'Hoy' },
+];
+
+// ─── ESTADO ────────────────────────────────────
+let filtroCategoria = 'Todos';
+let filtroBusqueda  = '';
+let filtroZona      = '';
+let filtroPrecios   = '';
+let productoActual  = null;
+let vendedorActual  = null;
+
+// ─── UTILIDADES ────────────────────────────────
+function showToast(msg, icon = '✅') {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<span>${icon}</span> ${msg}`;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function openModal(id) {
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  el.querySelector('[id^="close-"]')?.focus();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ─── POBLAR ZONAS ──────────────────────────────
+function poblarZonas() {
+  const sel = document.getElementById('filter-zona');
+  const zonas = [...new Set(productos.map(p => p.zona))].sort();
+  zonas.forEach(z => {
+    const opt = document.createElement('option');
+    opt.value = z; opt.textContent = '📍 ' + z;
+    sel.appendChild(opt);
+  });
+}
+
+// ─── CATEGORÍAS ────────────────────────────────
+function renderCategorias() {
+  const categorias = ['Todos', ...new Set(productos.map(p => p.cat))];
+  const bar = document.getElementById('categories-bar');
+  bar.innerHTML = '';
+  const iconos = { 'Todos':'🌾','Verduras':'🥦','Frutas':'🍊','Cereales':'🌾','Legumbres':'🫘','Aceite y conservas':'🫒','Miel y derivados':'🍯','Lácteos':'🥛','Carne y embutidos':'🥩','Pescado':'🐟','Hierbas y especias':'🌿','Otros':'📦' };
+  categorias.forEach(cat => {
+    const pill = document.createElement('button');
+    pill.className = 'cat-pill' + (cat === filtroCategoria ? ' active' : '');
+    pill.setAttribute('role', 'listitem');
+    pill.innerHTML = `${iconos[cat] || '📦'} ${cat}`;
+    pill.addEventListener('click', () => {
+      filtroCategoria = cat;
+      renderCategorias();
+      renderProductos();
+    });
+    bar.appendChild(pill);
+  });
+}
+
+// ─── PRODUCTOS ─────────────────────────────────
+function filtrarProductos() {
+  return productos.filter(p => {
+    const q = filtroBusqueda.toLowerCase();
+    const matchBusqueda = !q || p.nombre.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q);
+    const matchCat  = filtroCategoria === 'Todos' || p.cat === filtroCategoria;
+    const matchZona = !filtroZona || p.zona === filtroZona;
+    let matchPrecio = true;
+    if (filtroPrecios) {
+      const [min, max] = filtroPrecios.split('-').map(Number);
+      matchPrecio = p.precio >= min && p.precio <= max;
+    }
+    return matchBusqueda && matchCat && matchZona && matchPrecio;
+  });
+}
+
+function renderProductos() {
+  const grid = document.getElementById('product-grid');
+  const lista = filtrarProductos();
+  document.getElementById('results-count').textContent = `${lista.length} producto${lista.length !== 1 ? 's' : ''} encontrado${lista.length !== 1 ? 's' : ''}`;
+
+  if (!lista.length) {
+    grid.innerHTML = `<div class="empty-state"><span class="emoji">🌱</span><strong>Sin resultados</strong><p style="margin-top:6px">Prueba con otra búsqueda o categoría</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = lista.map(p => {
+    const v = vendedores.find(v => v.id === p.vendedorId);
+    return `
+    <article class="product-card" data-id="${p.id}" role="listitem" tabindex="0" aria-label="${p.nombre}">
+      <div class="product-img">
+        <img src="${p.img}" alt="${p.nombre}" loading="lazy" width="600" height="400">
+        <span class="product-badge${p.eco ? ' eco' : ''}">${p.eco ? '🌿 Ecológico' : p.cat}</span>
+        <button class="product-heart" data-id="${p.id}" aria-label="Guardar en favoritos">🤍</button>
+      </div>
+      <div class="product-body">
+        <h3 class="product-name">${p.nombre}</h3>
+        <p class="product-desc">${p.desc}</p>
+        <div class="product-meta">
+          <span class="product-zone">📍 ${p.zona}</span>
+          <span class="product-date">${p.fecha}</span>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">${p.precio.toFixed(2)} € <span>/ ${p.unidad}</span></div>
+          <a class="product-seller seller-link" data-seller-id="${v.id}" href="#" aria-label="Ver perfil de ${v.nombre}">
+            <img class="seller-avatar" src="${v.foto}" alt="${v.nombre}" width="28" height="28">
+            <span class="seller-name">${v.nombre}</span>
+          </a>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+
+  // Eventos de cards
+  grid.querySelectorAll('.product-card').forEach(card => {
+    const openCard = () => {
+      const id = parseInt(card.dataset.id);
+      abrirProducto(id);
+    };
+    card.addEventListener('click', e => {
+      if (e.target.closest('.product-heart') || e.target.closest('.seller-link') || e.target.closest('.btn-report')) return;
+      openCard();
+    });
+    card.addEventListener('keydown', e => { if (e.key === 'Enter') openCard(); });
+  });
+
+  // Corazones
+  grid.querySelectorAll('.product-heart').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      btn.classList.toggle('liked');
+      btn.textContent = btn.classList.contains('liked') ? '❤️' : '🤍';
+      showToast(btn.classList.contains('liked') ? 'Guardado en favoritos' : 'Eliminado de favoritos', btn.classList.contains('liked') ? '❤️' : '🤍');
+    });
+  });
+
+  // Links vendedor
+  grid.querySelectorAll('.seller-link').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = parseInt(link.dataset.sellerId);
+      abrirVendedor(id);
+    });
+  });
+}
+
+// ─── ABRIR PRODUCTO ────────────────────────────
+function abrirProducto(id) {
+  const p = productos.find(x => x.id === id);
+  if (!p) return;
+  productoActual = p;
+  const v = vendedores.find(v => v.id === p.vendedorId);
+
+  document.getElementById('mp-img').src   = p.img;
+  document.getElementById('mp-img').alt   = p.nombre;
+  document.getElementById('mp-nombre').textContent = p.nombre;
+  document.getElementById('mp-precio').innerHTML   = `${p.precio.toFixed(2)} € <small>/ ${p.unidad}</small>`;
+  document.getElementById('mp-desc').textContent   = p.desc;
+  document.getElementById('mp-tags').innerHTML     = `<span class="tag">${p.cat}</span>${p.eco ? '<span class="tag">🌿 Ecológico</span>' : ''}<span class="tag">📍 ${p.zona}</span>`;
+  document.getElementById('mp-seller-img').src     = v.foto;
+  document.getElementById('mp-seller-nombre').textContent = v.nombre;
+  document.getElementById('mp-seller-zona').textContent   = '📍 ' + v.zona + ' · ⭐ ' + v.rating;
+  document.getElementById('mp-whatsapp').href = `https://wa.me/34${p.tel}?text=${encodeURIComponent(`Hola ${v.nombre}, he visto tu anuncio de "${p.nombre}" en Del Campo al Plato y me interesa. ¿Sigue disponible?`)}`;
+  document.getElementById('mp-llamar').href   = `tel:+34${p.tel}`;
+
+  document.getElementById('mp-seller-box').dataset.sellerId = v.id;
+  openModal('modal-producto');
+}
+
+// ─── ABRIR VENDEDOR ────────────────────────────
+function abrirVendedor(id) {
+  const v = vendedores.find(x => x.id === id);
+  if (!v) return;
+  vendedorActual = v;
+  const sus = productos.filter(p => p.vendedorId === id);
+
+  document.getElementById('mv-img').src  = v.foto;
+  document.getElementById('mv-nombre').textContent = v.nombre;
+  document.getElementById('mv-zona').textContent   = '📍 ' + v.zona;
+  document.getElementById('mv-nanuncios').textContent = sus.length;
+  document.getElementById('mv-rating').textContent    = '⭐ ' + v.rating;
+  document.getElementById('mv-ventas').textContent    = v.ventas;
+
+  document.getElementById('mv-products').innerHTML = sus.map(p => `
+    <div class="seller-mini-card" data-id="${p.id}" tabindex="0" role="button" aria-label="${p.nombre}">
+      <img src="${p.img}" alt="${p.nombre}" loading="lazy" width="300" height="200">
+      <div class="seller-mini-info">
+        <strong>${p.nombre}</strong>
+        <span>${p.precio.toFixed(2)} € / ${p.unidad}</span>
+      </div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('#mv-products .seller-mini-card').forEach(card => {
+    const openMini = () => {
+      closeModal('modal-vendedor');
+      setTimeout(() => abrirProducto(parseInt(card.dataset.id)), 200);
+    };
+    card.addEventListener('click', openMini);
+    card.addEventListener('keydown', e => { if (e.key === 'Enter') openMini(); });
+  });
+
+  closeModal('modal-producto');
+  setTimeout(() => openModal('modal-vendedor'), 200);
+}
+
+// ─── FORMULARIO PUBLICAR ───────────────────────
+document.getElementById('publish-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const campos = ['pub-nombre', 'pub-categoria', 'pub-zona', 'pub-precio', 'pub-telefono', 'pub-vendedor'];
+  let ok = true;
+  campos.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) { el.style.borderColor = 'var(--color-accent)'; ok = false; }
+    else el.style.borderColor = '';
+  });
+  const checkNorm = document.getElementById('pub-normativa');
+  const checkWrap = document.getElementById('check-normativa-wrap');
+  if (!checkNorm.checked) {
+    checkWrap.classList.add('error');
+    ok = false;
+  } else {
+    checkWrap.classList.remove('error');
+  }
+  if (!ok) { showToast('Completa los campos obligatorios y acepta la declaración legal', '⚠️'); return; }
+  closeModal('modal-publicar');
+  document.getElementById('publish-form').reset();
+  checkWrap.classList.remove('error');
+  showToast('¡Anuncio publicado correctamente!', '🚀');
+});
+
+// ─── BOTÓN SELLER EN MODAL PRODUCTO ───────────
+document.getElementById('mp-seller-box').addEventListener('click', () => {
+  const id = parseInt(document.getElementById('mp-seller-box').dataset.sellerId);
+  if (id) abrirVendedor(id);
+});
+
+document.getElementById('mp-reportar').addEventListener('click', () => {
+  if (!productoActual) return;
+  const p = productoActual;
+  const subject = encodeURIComponent(`Reporte de anuncio: ${p.nombre} (ID ${p.id})`);
+  const body = encodeURIComponent(`Hola,\n\nQuiero reportar el siguiente anuncio por posible fraude o problema sanitario:\n\nProducto: ${p.nombre}\nID: ${p.id}\nZona: ${p.zona}\n\nMotivo del reporte:\n[Describe aquí el problema]\n\nGracias.`);
+  window.open(`mailto:reportes@delcampoalplato.es?subject=${subject}&body=${body}`, '_blank');
+  showToast('Gracias por tu reporte. Lo revisaremos en breve.', '🚩');
+});
+
+// ─── FILTROS ───────────────────────────────────
+document.getElementById('search-input').addEventListener('input', e => { filtroBusqueda = e.target.value; renderProductos(); });
+document.getElementById('filter-zona').addEventListener('change', e => { filtroZona = e.target.value; renderProductos(); });
+document.getElementById('filter-precio').addEventListener('change', e => { filtroPrecios = e.target.value; renderProductos(); });
+
+// ─── BOTONES PUBLICAR ──────────────────────────
+['btn-publicar-header','btn-publicar-hero','link-publicar-footer'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('click', e => { e.preventDefault(); openModal('modal-publicar'); });
+});
+
+// ─── CERRAR MODALES (todos) ────────────────────
+const todosModales = ['modal-producto','modal-vendedor','modal-publicar','modal-aviso-legal','modal-privacidad','modal-cookies'];
+
+document.getElementById('close-producto').addEventListener('click',    () => closeModal('modal-producto'));
+document.getElementById('close-vendedor').addEventListener('click',    () => closeModal('modal-vendedor'));
+document.getElementById('close-publicar').addEventListener('click',    () => closeModal('modal-publicar'));
+document.getElementById('close-aviso-legal').addEventListener('click', () => closeModal('modal-aviso-legal'));
+document.getElementById('close-privacidad').addEventListener('click',  () => closeModal('modal-privacidad'));
+document.getElementById('close-cookies').addEventListener('click',     () => closeModal('modal-cookies'));
+
+todosModales.forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal(id);
+  });
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') todosModales.forEach(id => closeModal(id));
+});
+
+// ─── LINKS LEGALES (footer + banner + formulario) ─
+function bindLegal(selector, modal) {
+  document.querySelectorAll(selector).forEach(el => {
+    el.addEventListener('click', e => { e.preventDefault(); openModal(modal); });
+  });
+}
+bindLegal('#link-aviso-footer, #link-aviso-bottom, .open-aviso-legal', 'modal-aviso-legal');
+bindLegal('#link-privacidad-footer, #link-privacidad-bottom, #link-privacidad-banner', 'modal-privacidad');
+bindLegal('#link-cookies-footer, #link-cookies-bottom, #link-cookies-banner', 'modal-cookies');
+
+// ─── BANNER COOKIES ────────────────────────────
+const COOKIE_KEY = 'dcap_cookies_ok';
+const banner = document.getElementById('cookie-banner');
+
+function hideCookieBanner() {
+  banner.classList.remove('show');
+  try { localStorage.setItem(COOKIE_KEY, '1'); } catch(e) {}
+}
+
+if (!localStorage.getItem(COOKIE_KEY)) {
+  setTimeout(() => banner.classList.add('show'), 900);
+}
+
+document.getElementById('btn-cookies-accept').addEventListener('click', hideCookieBanner);
+document.getElementById('btn-cookies-info').addEventListener('click', () => {
+  hideCookieBanner();
+  setTimeout(() => openModal('modal-cookies'), 300);
+});
+
+// ─── INIT ──────────────────────────────────────
+poblarZonas();
+renderCategorias();
+renderProductos();
+</script>
+</body>
+</html>
