@@ -1282,6 +1282,24 @@ function abrirVendedor(id) {
   setTimeout(() => openModal('modal-vendedor'), 200);
 }
 
+// ─── LOCALSTORAGE ANUNCIOS ────────────────────
+const LS_KEY = 'dcap_anuncios';
+
+function cargarAnunciosGuardados() {
+  try {
+    const guardados = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    guardados.forEach(p => productos.push(p));
+  } catch(e) {}
+}
+
+function guardarAnuncio(anuncio) {
+  try {
+    const guardados = JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    guardados.push(anuncio);
+    localStorage.setItem(LS_KEY, JSON.stringify(guardados));
+  } catch(e) {}
+}
+
 // ─── FORMULARIO PUBLICAR ───────────────────────
 document.getElementById('publish-form').addEventListener('submit', e => {
   e.preventDefault();
@@ -1301,9 +1319,44 @@ document.getElementById('publish-form').addEventListener('submit', e => {
     checkWrap.classList.remove('error');
   }
   if (!ok) { showToast('Completa los campos obligatorios y acepta la declaración legal', '⚠️'); return; }
+
+  // Construir el nuevo anuncio
+  const catRaw = document.getElementById('pub-categoria').value.replace(/^[^\s]+\s/, '');
+  const nuevoId = Date.now();
+  const nuevoAnuncio = {
+    id:         nuevoId,
+    nombre:     document.getElementById('pub-nombre').value.trim(),
+    cat:        catRaw,
+    precio:     parseFloat(document.getElementById('pub-precio').value) || 0,
+    unidad:     document.getElementById('pub-unidad').value,
+    zona:       document.getElementById('pub-zona').value.trim(),
+    desc:       document.getElementById('pub-desc').value.trim() || 'Sin descripción.',
+    img:        'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&h=400&fit=crop',
+    eco:        false,
+    vendedorId: 99,
+    tel:        document.getElementById('pub-telefono').value.trim(),
+    fecha:      'Hoy',
+    _vendedor:  document.getElementById('pub-vendedor').value.trim()
+  };
+
+  // Añadir vendedor temporal si no existe
+  const nombreV = nuevoAnuncio._vendedor;
+  if (!vendedores.find(v => v.id === 99 && v.nombre === nombreV)) {
+    vendedores.push({ id: nuevoId + 1, nombre: nombreV, zona: nuevoAnuncio.zona, foto: 'https://i.pravatar.cc/80?img=60', rating: 5.0, ventas: 0 });
+    nuevoAnuncio.vendedorId = nuevoId + 1;
+  }
+
+  // Guardar y mostrar
+  productos.unshift(nuevoAnuncio);
+  guardarAnuncio(nuevoAnuncio);
+
   closeModal('modal-publicar');
   document.getElementById('publish-form').reset();
   checkWrap.classList.remove('error');
+
+  filtroCategoria = 'Todos';
+  renderCategorias();
+  renderProductos();
   showToast('¡Anuncio publicado correctamente!', '🚀');
 });
 
@@ -1383,6 +1436,7 @@ document.getElementById('btn-cookies-info').addEventListener('click', () => {
 });
 
 // ─── INIT ──────────────────────────────────────
+cargarAnunciosGuardados();
 poblarZonas();
 renderCategorias();
 renderProductos();
